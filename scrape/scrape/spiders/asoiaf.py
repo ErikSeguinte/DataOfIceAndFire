@@ -10,7 +10,13 @@ class BookSpider(scrapy.Spider):
             yield response.follow(title, self.parse_chapters)
 
     def parse_chapters(self, response):
-        yield {
-            'chapters' : response.css("h3 a::text").getall(),
-            'scores' : response.css('.rightend a::text').getall()
-        }
+        title = response.css('h2::text').get()
+        chapters = response.css("h3 a::text").getall()
+        scores = response.css('.rightend a::text').getall()
+
+        for chapter, score in zip(chapters, scores):
+            yield({
+                'title': title,
+                'chapter' : chapter,
+                'score' : score
+            })
